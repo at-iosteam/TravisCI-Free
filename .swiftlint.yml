@@ -1,0 +1,14 @@
+# reporter: xcode
+disabled_rules:
+  - todo # 開発中のみignore
+  - trailing_whitespace
+excluded:
+  - Carthage
+  - Pods
+line_length: 500
+function_body_length:
+  - 50 # 仮決め
+  - 100
+type_body_length:
+  - 300 # 仮決め
+  - 500
