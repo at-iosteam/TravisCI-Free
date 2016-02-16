@@ -12,6 +12,4 @@ env:
     - secure: "ie8ZM1htFgMKR3NKm88wQvZJ5DXf4aAhpQle0aFwEV+Nyx6ysRmFRo7GPPLUk0CI8XU//OXEjoiykwKK4I0/Kc9EFS7PzSTmsL5urLGlh7swpuGOwDLqcqUfjGqdnLHUggFQ8SstOtLZtsSUljBL6GsbOn8ZyVuhjsEdZP0Yz/VhHGl7ntIIwgiPgxOu6dWFtO0bk7V8HKk0gzpfIVYwkEN9A13WlFLuP/0ZnJNTAIM+EA6HWSvabWT72VTHo3pTwf5a9elIEqpExIofkaybtDinRWlxfk0DvYW/W2aeZnDhKkbugr49/LPPlwnNo+NcRabPcL+t57ny2RZ8F9WFhYCDb5SAr8wDaCKSAwk2mmVdbpXBJ64KO1JLDJL7ROA3+vPgTGnUPeDeuETW9bJcZ5t38ERLGQMKZy5JOluk3S13S2N3pHHnL7uk81HUUARqNjIlpj/oJhjAeYB0lIWOgwBrcFVO5/KPKU06WLIgILEUMJOJud+TfLm4Qkwj1qSs8d0CDA8eT7VsfgpmBBeI69C7+MZTe0tHMzS9jLWg699dMi8Rv+2SwO0cDgfyHgp4ANdqN/4IxW+SwmWSbBVzYPGhAFgzzhl9oQBb9qR+2CIh23s0noKVFC+nUvuyQ/m9+7Wz2DJa1y5/8fJ/DqVphcGmsfv4asc3VNzt9yloekk="
 
 before_script: 
-  - chmod a+x ./bin/run-rubocop.sh
-  - ./bin/run-rubocop.sh
- 
+	- bundle exec fastlane analyze 

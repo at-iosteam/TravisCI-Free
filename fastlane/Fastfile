@@ -2,13 +2,10 @@ fastlane_version '1.53.0'
 
 default_platform :ios
 
-scheme_name = 'AkippaiOSProject'
-project_name = 'Soccer'
+scheme_name = 'TravisCI'
+project_name = 'TravisCI'
 bundle_id = 'com.dhs.dev'
-provisioning_profile = '49e43ae1-2176-41c1-8bec-bb047e7f2583'
-
-# And you need to set environment variables.
-# GITHUB_ACCESS_TOKEN : GitHub access token, using when comment to Pull Request and create release.
+provisioning_profile = ''
 
 platform :ios do
   lane :beta do
@@ -18,20 +15,13 @@ platform :ios do
       scheme: scheme_name,
       output_name: "#{project_name}.ipa",
       use_legacy_build_api: true,
-      export_method: 'enterprise',
+      export_method: '',
       xcargs: xcodebuild_args
     )
 
     if is_ci?
       Helper.log.info 'Save Artifacts'
       sh "cp #{lane_context[SharedValues::IPA_OUTPUT_PATH]} $CIRCLE_ARTIFACTS"
-
-      deploygate(
-        api_token: ENV['DEPLOYGATE_API_KEY'],
-        user: ENV['DEPLOYGATE_USER'],
-        ipa: "#{project_name}.ipa",
-        message: "Build #{ENV['CIRCLE_SHA1']}"
-      )
     end
 
     remove_keychain if is_ci?
@@ -45,7 +35,7 @@ platform :ios do
       output_file: 'swiftlint.result.json',
       config_file: '.swiftlint-ci.yml'
     )
-    sh 'chmod 0777 ../swiftlint.result.json'
+
     sh 'cp ../swiftlint.result.json $CIRCLE_ARTIFACTS/'
 
     sh <<-EOS
@@ -71,41 +61,6 @@ cat swiftlint.result.json \
 
   private_lane :delete_lint_config do
     File.delete('../.swiftlint-ci.yml')
-  end
-
-  private_lane :add_keychain do
-    create_keychain(
-      name: 'ios-build.keychain',
-      password: SecureRandom.uuid,
-      default_keychain: true,
-      unlock: true,
-      timeout: 3600,
-      lock_when_sleeps: true
-    )
-    import_certificate keychain_name: 'ios-build.keychain', certificate_path: 'fastlane/cert/apple.cer'
-    Dir.glob('cert/*.p12').each do |cert_file|
-      import_certificate keychain_name: 'ios-build.keychain', certificate_path: 'fastlane/' + cert_file, certificate_password: ENV['KEY_PASSWORD']
-    end
-
-    Dir.glob('cert/*.mobileprovision').each do |provisioning_file|
-      FastlaneCore::ProvisioningProfile.install(provisioning_file)
-    end
-  end
-
-  private_lane :remove_keychain do
-    delete_keychain(
-      name: 'ios-build.keychain'
-    )
-    sh "rm -f \"#{FastlaneCore::ProvisioningProfile.profiles_path}*\""
-  end
-
-  private_lane :xcodebuild_args do
-    {
-      PROVISIONING_PROFILE: provisioning_profile,
-      PRODUCT_BUNDLE_IDENTIFIER: bundle_id
-    }.map do |k, v|
-      "#{k.to_s.shellescape}=#{v.shellescape}"
-    end.join ' '
   end
 
   def reporter
