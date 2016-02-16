@@ -45,7 +45,7 @@ platform :ios do
       output_file: 'swiftlint.result.json',
       config_file: '.swiftlint-ci.yml'
     )
-
+    sh 'chmod +x ../swiftlint.result.json'
     sh 'cp ../swiftlint.result.json $CIRCLE_ARTIFACTS/'
 
     sh <<-EOS
