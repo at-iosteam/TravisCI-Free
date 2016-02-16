@@ -15,4 +15,6 @@ before_script:
   - chmod a+x ./bin/run-rubocop.sh
   - ./bin/run-rubocop.sh
 
-script: xctool -project TravisCI.xcodeproj -scheme TravisCI -sdk iphonesimulator9.2 build test
+script: 
+ - xctool -project TravisCI.xcodeproj -scheme TravisCI -sdk iphonesimulator9.2 build test
+ - bundle exec fastlane analyze

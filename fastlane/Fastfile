@@ -1,0 +1,118 @@
+fastlane_version '1.53.0'
+
+default_platform :ios
+
+scheme_name = 'AkippaiOSProject'
+project_name = 'Soccer'
+bundle_id = 'com.dhs.dev'
+provisioning_profile = '49e43ae1-2176-41c1-8bec-bb047e7f2583'
+
+# And you need to set environment variables.
+# GITHUB_ACCESS_TOKEN : GitHub access token, using when comment to Pull Request and create release.
+
+platform :ios do
+  lane :beta do
+    add_keychain if is_ci?
+
+    gym(
+      scheme: scheme_name,
+      output_name: "#{project_name}.ipa",
+      use_legacy_build_api: true,
+      export_method: 'enterprise',
+      xcargs: xcodebuild_args
+    )
+
+    if is_ci?
+      Helper.log.info 'Save Artifacts'
+      sh "cp #{lane_context[SharedValues::IPA_OUTPUT_PATH]} $CIRCLE_ARTIFACTS"
+
+      deploygate(
+        api_token: ENV['DEPLOYGATE_API_KEY'],
+        user: ENV['DEPLOYGATE_USER'],
+        ipa: "#{project_name}.ipa",
+        message: "Build #{ENV['CIRCLE_SHA1']}"
+      )
+    end
+
+    remove_keychain if is_ci?
+  end
+
+  desc 'Analyze codes'
+  desc 'This may comment to pull request'
+  lane :analyze do
+    create_lint_config
+    swiftlint(
+      output_file: 'swiftlint.result.json',
+      config_file: '.swiftlint-ci.yml'
+    )
+
+    sh 'cp ../swiftlint.result.json $CIRCLE_ARTIFACTS/'
+
+    sh <<-EOS
+cd ../;
+cat swiftlint.result.json \
+    | swiftlint_translate_checkstyle_format translate \
+    | checkstyle_filter-git diff origin/master \
+    | saddler report --require saddler/reporter/github --reporter #{reporter}
+    EOS
+
+    delete_lint_config
+  end
+
+  private_lane :create_lint_config do
+    File.delete('../.swiftlint-ci.yml') if File.exist?('../.swiftlint-ci.yml')
+    require 'yaml'
+    config = YAML.load_file('../.swiftlint.yml')
+    config['reporter'] = 'json'
+    open('../.swiftlint-ci.yml', 'w') do |file|
+      YAML.dump(config, file)
+    end
+  end
+
+  private_lane :delete_lint_config do
+    File.delete('../.swiftlint-ci.yml')
+  end
+
+  private_lane :add_keychain do
+    create_keychain(
+      name: 'ios-build.keychain',
+      password: SecureRandom.uuid,
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: true
+    )
+    import_certificate keychain_name: 'ios-build.keychain', certificate_path: 'fastlane/cert/apple.cer'
+    Dir.glob('cert/*.p12').each do |cert_file|
+      import_certificate keychain_name: 'ios-build.keychain', certificate_path: 'fastlane/' + cert_file, certificate_password: ENV['KEY_PASSWORD']
+    end
+
+    Dir.glob('cert/*.mobileprovision').each do |provisioning_file|
+      FastlaneCore::ProvisioningProfile.install(provisioning_file)
+    end
+  end
+
+  private_lane :remove_keychain do
+    delete_keychain(
+      name: 'ios-build.keychain'
+    )
+    sh "rm -f \"#{FastlaneCore::ProvisioningProfile.profiles_path}*\""
+  end
+
+  private_lane :xcodebuild_args do
+    {
+      PROVISIONING_PROFILE: provisioning_profile,
+      PRODUCT_BUNDLE_IDENTIFIER: bundle_id
+    }.map do |k, v|
+      "#{k.to_s.shellescape}=#{v.shellescape}"
+    end.join ' '
+  end
+
+  def reporter
+    if ENV['CI_PULL_REQUEST'].nil? || ENV['CI_PULL_REQUEST'].empty?
+      'Saddler::Reporter::Github::CommitReviewComment'
+    else
+      'Saddler::Reporter::Github::PullRequestReviewComment'
+    end
+  end
+end
