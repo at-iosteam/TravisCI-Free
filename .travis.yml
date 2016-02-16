@@ -7,6 +7,5 @@ before_install:
   - brew update
   - brew install swiftlint
 before_script: 
-chmod a+x ./bin/run-rubocop.sh
-
-./bin/run-rubocop.sh
+  - chmod a+x ./bin/run-rubocop.sh
+  - ./bin/run-rubocop.sh
