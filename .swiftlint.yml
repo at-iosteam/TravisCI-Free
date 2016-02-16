@@ -12,3 +12,4 @@ function_body_length:
 type_body_length:
   - 300 # 仮決め
   - 500
+reporter: json
