@@ -45,7 +45,7 @@ if [ -n "${TRAVIS_PULL_REQUEST}" ] && [ "${TRAVIS_PULL_REQUEST}" != "false" ]; t
    | checkstyle_filter-git diff origin/master \
    | bundle exec saddler report \
       --require saddler/reporter/github \
-      --reporter Saddler::Reporter::Github::PullRequestReviewComment
+      --reporter Saddler::Reporter::Github::PullRequestComment
 fi
 
 exit 0
