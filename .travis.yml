@@ -6,4 +6,7 @@ xcode_sdk: iphonesimulator9.2 #5
 before_install:
   - brew update
   - brew install swiftlint
-before_script: ./bin/run-rubocop.sh
+before_script: 
+chmod a+x ./bin/run-rubocop.sh
+
+./bin/run-rubocop.sh
