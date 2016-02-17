@@ -24,6 +24,8 @@ platform :ios do
     | swiftlint_translate_checkstyle_format translate \
     | checkstyle_filter-git diff origin/master \
     | saddler report --require saddler/reporter/github --reporter #{reporter}
+    EOS
+
   end
 
   private_lane :create_lint_config do
