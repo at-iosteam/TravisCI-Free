@@ -6,17 +6,20 @@ scheme_name = 'TravisCI'
 project_name = 'TravisCI'
 bundle_id = 'com.dhs.dev'
 provisioning_profile = ''
+GITHUB_ACCESS_TOKEN : 3b302cc65add0f6aaab5f0840fc2b1e144329f6f
 
 platform :ios do
 
   desc 'Analyze codes'
   desc 'This may comment to pull request'
   lane :analyze do
-
+    create_lint_config
     swiftlint(
       output_file: 'swiftlint.result.json',
-      config_file: '.swiftlint.yml'
+      config_file: '.swiftlint-ci.yml'
     )
+
+    sh 'cp ../swiftlint.result.json $CIRCLE_ARTIFACTS/'
 
     sh <<-EOS
 cd ../;
@@ -26,6 +29,21 @@ cat swiftlint.result.json \
     | saddler report --require saddler/reporter/github --reporter #{reporter}
     EOS
 
+    delete_lint_config
+  end
+
+  private_lane :create_lint_config do
+    File.delete('../.swiftlint-ci.yml') if File.exist?('../.swiftlint-ci.yml')
+    require 'yaml'
+    config = YAML.load_file('../.swiftlint.yml')
+    config['reporter'] = 'json'
+    open('../.swiftlint-ci.yml', 'w') do |file|
+      YAML.dump(config, file)
+    end
+  end
+
+  private_lane :delete_lint_config do
+    File.delete('../.swiftlint-ci.yml')
   end
 
   def reporter
