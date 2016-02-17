@@ -7,7 +7,9 @@ before_install:
   - brew update
   - brew install swiftlint
   - gem install --no-document saddler saddler-reporter-github
-
+env:
+  global:
+    - GITHUB_ACCESS_TOKEN: "3b302cc65add0f6aaab5f0840fc2b1e144329f6f"
 before_script: 
 - fastlane enable_crash_reporting 
 - bundle exec fastlane analyze 
