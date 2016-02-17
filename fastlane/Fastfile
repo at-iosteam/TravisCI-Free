@@ -12,10 +12,9 @@ platform :ios do
   desc 'Analyze codes'
   desc 'This may comment to pull request'
   lane :analyze do
-    create_lint_config
     swiftlint(
       output_file: 'swiftlint.result.json',
-      config_file: '.swiftlint-ci.yml'
+      config_file: '.swiftlint.yml'
     )
 
     sh <<-EOS
@@ -25,8 +24,6 @@ cat swiftlint.result.json \
     | checkstyle_filter-git diff origin/master \
     | saddler report --require saddler/reporter/github --reporter #{reporter}
     EOS
-
-    delete_lint_config
   end
 
   private_lane :create_lint_config do
