@@ -7,6 +7,11 @@ before_install:
   - brew update
   - brew install swiftlint
   - brew install ruby
+  - gem install fastlane
+  - gem install checkstyle_filter-git
+  - gem install saddler
+  - gem install saddler-reporter-github
+  - gem install swiftlint_translate_checkstyle_format
   - gem install --no-document saddler saddler-reporter-github
 env:
   global:

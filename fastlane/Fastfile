@@ -18,8 +18,8 @@ platform :ios do
     )
 
     sh <<-EOS
-cd ../;
-cat swiftlint.result.json \
+  cd ../;
+  cat swiftlint.result.json \
     | swiftlint_translate_checkstyle_format translate \
     | checkstyle_filter-git diff origin/master \
     | saddler report --require saddler/reporter/github --reporter #{reporter}
