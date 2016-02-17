@@ -6,7 +6,7 @@ scheme_name = 'TravisCI'
 project_name = 'TravisCI'
 bundle_id = 'com.dhs.dev'
 provisioning_profile = ''
-GITHUB_ACCESS_TOKEN : 3b302cc65add0f6aaab5f0840fc2b1e144329f6f
+GITHUB_ACCESS_TOKEN : '3b302cc65add0f6aaab5f0840fc2b1e144329f6f'
 
 platform :ios do
 
