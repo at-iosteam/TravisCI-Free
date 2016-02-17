@@ -42,7 +42,7 @@ platform :ios do
   end
 
   def reporter
-    if ENV['CI_PULL_REQUEST'].nil? || ENV['CI_PULL_REQUEST'].empty?
+    if ENV['TRAVIS_PULL_REQUEST'].nil? || ENV['TRAVIS_PULL_REQUEST'].empty?
       'Saddler::Reporter::Github::CommitReviewComment'
 	'Saddler::Reporter::Github::PullRequestReviewComment'
     else
