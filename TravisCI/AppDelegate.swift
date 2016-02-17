@@ -49,8 +49,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return urls[urls.count-1]
     }()
 
-    lazy var managedObjectModel:NSManagedObjectModel = {
-        // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its modelThe managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its modelThe managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its modelThe managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its modelThe managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its modelThe managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its modelThe managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
+    lazy var managedObjectModel: NSManagedObjectModel = {
+        // The managed object model for the appd and load its model.
         let modelURL = NSBundle.mainBundle().URLForResource("TravisCI", withExtension: "momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
     }()

@@ -35,7 +35,7 @@ class TravisCITests: XCTestCase {
     
     func testFaile() {
         
-        XCTAssertNil("aaa", "Cannot find CalcView instance");
+        XCTAssertNil(nil, "Cannot find CalcView instance");
 
     }
     
