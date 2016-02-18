@@ -18,7 +18,11 @@ platform :ios do
     )
     sh <<-EOS
 
+  ls;
+pwd;
   cd ../;
+ls;
+pwd;
   cat swiftlint.result.json \
     | swiftlint_translate_checkstyle_format translate \
     | checkstyle_filter-git diff origin/master \
